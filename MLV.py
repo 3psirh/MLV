@@ -37,9 +37,8 @@ def thed(b, count):
                 pass
         try:
             ur.urlopen(b[1])
-            print('Views: +1')
             i+=1
-            print(i)
+            print('Views: +1')
         except:
             print('Some problem')
             pass
