@@ -1,13 +1,14 @@
-import urllib.request as ur, multiprocessing
+import multiprocessing
+import urllib.request as ur
 from threading import Thread
+
 print('''                             
 @@@@@@@@@@    @@@      @@@  @@@
 @@! @@! @@!   @@!      @@!  @@@
 @!! !!@ @!@   @!!      @!@  !@!
 !!:     !!    !!:       !: .:! 
- "      "     :;;:;;.     ?;   \n\nMLV v2.0''')
-th = 0
-b = ""
+ "      "     :;;:;;.     ?;   \n\nMLV v2.1''')
+file = ""
 try:
     b = input('>>>').split()
 except KeyboardInterrupt:
@@ -16,11 +17,12 @@ except KeyboardInterrupt:
 if "-p" in b:
     ur.install_opener(ur.build_opener(
         ur.ProxyHandler({b[b.index("-p") + 1].split("/")[0]: b[b.index("-p") + 1].split("/")[1]})))
+if "-txtp" in b:
+    file = open(b[b.index("-txtp") + 1], "r")
 
-def thed(b, count):
+
+def thed(b, count, file):
     i = 0
-    if "-txtp" in b:
-        file = open(b[b.index("-txtp") + 1], "r")
     while i != count:
         if i == count:
             break
@@ -31,13 +33,13 @@ def thed(b, count):
                     file = open(b[b.index("-txtp") + 1], "r")
                     bg = file.readline(-1)
                 ur.install_opener(ur.build_opener(
-                ur.ProxyHandler({bg.split(";")[0]: bg.replace('\n', '')[1]})))
+                    ur.ProxyHandler({bg.split(";")[0]: bg.replace('\n', '')[1]})))
             except:
                 print("ERROR")
                 pass
         try:
             ur.urlopen(b[1])
-            i+=1
+            i += 1
             print('Views: +1')
         except:
             print('Some problem')
@@ -46,14 +48,14 @@ def thed(b, count):
 
 def func(b, th):
     count = (int(b[3]) // th)
-    thread = (Thread(target=thed, args=[b, count]) for j in range(th))
+    print(th)
+    thread = (Thread(target=thed, args=[b, count, file]) for j in range(th))
     for pp in thread:
         pp.start()
     for pp in thread:
         pp.join()
     if int(b[3]) - (int(b[3]) // th) * th != 0:
         for ij in range(int(b[3]) - ((int(b[3]) // th) * th)):
-
             try:
                 ur.urlopen(b[1])
                 print('Views: +1')
@@ -65,17 +67,12 @@ def func(b, th):
 
 
 def control(b):
-    if int(b[3]) == 0:
-        print("No views!")
-        raise SystemExit
-    if "-th" in b:
-        try:
-            th = int(b[b.index("-th") + 1])
-        except IndexError:
-            th = multiprocessing.cpu_count()
-        func(b, th)
-    else:
-        count = int(b[3])
-        thed(b, count)
+    try:
+        th = int(b[b.index("-th") + 1])
+    except ValueError or IndexError:
+        th = multiprocessing.cpu_count()
+    func(b, th)
+
+
 if __name__ == '__main__':
     control(b)
